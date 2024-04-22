@@ -26,7 +26,7 @@ PFIFGLOBAL = new.env()
 #' on Windows.
 #' @examples
 #' root = "/media/jr/Alexandre/RMF_EFI_layers/"
-#' out_dir <- '/home/jr/Documents/Ulaval/Projets Annexes/Alexandre - ontario'
+#' out_dir <- '/home/jr/Documents/Ulaval/2024 PDR/Alexandre - ontario'
 #' lc_f <- "/home/jr/Téléchargements/CA_forest_VLCE2_2018/CA_forest_VLCE2_2018.tif"
 #' otb_dir <- "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin"
 #'
