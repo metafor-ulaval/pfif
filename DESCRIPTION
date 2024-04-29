@@ -5,9 +5,9 @@ Version: 0.1.0
 Authors@R: c(
     person("Ethan", "Berman", email = "", role = c("aut","cph")),
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")))
-Description: Integration of Photo Interpreted and LiDAR Attributes into a Polygonal Forest Inventory Framework
-Imports: terra,dplyr,stringr,evaluate,stats,janitor,tibble,exactextractr,sf,utils
-License: MIT
+Description: Integration of Photo Interpreted and LiDAR Attributes into a Polygonal Forest Inventory Framework.
+Imports: terra
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
