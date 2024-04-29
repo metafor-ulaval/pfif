@@ -4,6 +4,10 @@ Integration of Photo Interpreted and LiDAR Attributes into a Polygonal Forest In
 
 ## Installation
 
+```r
+remotes::install_github("metafor-ulaval/pfif")
+```
+
 ## Example
 
 ``` r
