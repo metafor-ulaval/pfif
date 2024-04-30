@@ -11,6 +11,9 @@ remotes::install_github("metafor-ulaval/pfif")
 ## Example
 
 ``` r
+library(pfif)
+library(terra)
+
 # load the data
 f = system.file("extdata", "metrics.tif", package="pfif")
 g = system.file("extdata", "roads.gpkg", package="pfif")
