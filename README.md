@@ -35,13 +35,9 @@ plot(layers)
 
 # Generic region merging
 ofile = paste0(tempdir(), "/grm.tif")
-grm = generic_region_merging(layers, ofile, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
-color = grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)]
-plot(grm, col= color)
+polygons = generic_region_merging(layers, ofile, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
 
-# Final polygons
-polygons = as.polygons(grm)
-plotRGB(layers, scale = 100)
+plotRGB(layers)
 plot(polygons, border = "red", add = T)
 ```
 

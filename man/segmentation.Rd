@@ -2,15 +2,30 @@
 % Please edit documentation in R/region_merging.R
 \name{generic_region_merging}
 \alias{generic_region_merging}
-\title{Call OTB GenericRegionMerging.}
+\alias{kmeans_region_merging}
+\alias{kmeans_generic_region_merging}
+\title{Segmentation of a raster into polygons}
 \usage{
 generic_region_merging(
+  input,
+  ofile = tempfile(fileext = ".tif"),
+  thresh = 25,
+  spec = 0.1,
+  spat = 0.5,
+  method = "bs",
+  otb_dir = "C:/OTB/bin"
+)
+
+kmeans_region_merging(input, polygons, k = 10)
+
+kmeans_generic_region_merging(
   input,
   ofile = tempfile(fileext = ".tif"),
   thresh = 10,
   spec = 0.1,
   spat = 0.5,
   method = "bs",
+  k = 10,
   otb_dir = "C:/OTB/bin"
 )
 }
@@ -27,13 +42,21 @@ generic_region_merging(
 
 \item{otb_dir}{string. Directory location of OTB (where you installed OTB earlier).
 Likely "C:/OTB/bin" on Windows}
+
+\item{polygons}{sf object. Vector of polygons}
+
+\item{k.}{Number of clusters}
 }
 \value{
 the raster produced by OTB
 }
 \description{
-Call OTB GenericRegionMerging. OTB must be installed on your computer first.
-\url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}
+\code{generic_region_merging} is the original and the main function. It calls the OTB GenericRegionMerging software.
+OTB must be installed on your computer first. See  \url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}\cr\cr
+\code{kmeans_region_merging} takes the output of \code{generic_region_merging} and aggreates similar polygons into
+bigger polygons to generate of more realistic EFI with few and larger polygons using a K-Means Clustering
+approach.\cr\cr
+\code{kmean_generic_region_merging} is simply both algorithms in a single call.
 }
 \examples{
 \dontrun{
@@ -43,7 +66,7 @@ g = system.file("extdata", "roads.gpkg", package="pfif")
 h = system.file("extdata", "stream.gpkg", package="pfif")
 metrics = rast(f)
 roads = vect(g)
-stream = vect(h)
+stream = buffer(vect(h), 2)
 
 plot(metrics)
 plot(metrics[[1]])
@@ -56,14 +79,10 @@ layers = pre_processing(metrics, masks = masks)
 plot(layers)
 
 ofile = paste0(tempdir(), "/grm.tif")
-grm = generic_region_merging(layers, ofile, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
+otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin"
+polygons = generic_region_merging(layers, ofile, otb_dir = otb_dir)
 
-color = grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = TRUE)]
-plot(grm, col= color)
-
-polygons = terra::as.polygons(grm)
-
-plotRGB(layers)
-plot(polygons, border = "red", add = TRUE)
+plotRGB(layers, r = 3, g = 1, b = 4)
+plot(polygons, add = TRUE)
 }
 }

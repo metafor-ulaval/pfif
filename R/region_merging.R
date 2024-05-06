@@ -1,7 +1,11 @@
-#' Call OTB GenericRegionMerging.
+#' Segmentation of a raster into polygons
 #'
-#' Call OTB GenericRegionMerging. OTB must be installed on your computer first.
-#' \url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}
+#' `generic_region_merging` is the original and the main function. It calls the OTB GenericRegionMerging software.
+#' OTB must be installed on your computer first. See  \url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}\cr\cr
+#' `kmeans_region_merging` takes the output of `generic_region_merging` and aggreates similar polygons into
+#' bigger polygons to generate of more realistic EFI with few and larger polygons using a K-Means Clustering
+#' approach.\cr\cr
+#' `kmean_generic_region_merging` is simply both algorithms in a single call.
 #'
 #' @param input SpatRaster. Multiband raster to segment
 #' @param thresh,spec,spat numeric. refer to paper or OTB GRM webpage for description of parameters
@@ -11,8 +15,11 @@
 #' @param otb_dir string. Directory location of OTB (where you installed OTB earlier).
 #' Likely "C:/OTB/bin" on Windows
 #' @param ofile string. The path where to save the output of GRM
+#' @param polygons sf object. Vector of polygons
+#' @param k integer Number of clusters
 #' @return the raster produced by OTB
 #' @export
+#' @rdname segmentation
 #' @md
 #' @examples
 #' \dontrun{
@@ -22,7 +29,7 @@
 #' h = system.file("extdata", "stream.gpkg", package="pfif")
 #' metrics = rast(f)
 #' roads = vect(g)
-#' stream = vect(h)
+#' stream = buffer(vect(h), 2)
 #'
 #' plot(metrics)
 #' plot(metrics[[1]])
@@ -35,17 +42,13 @@
 #' plot(layers)
 #'
 #' ofile = paste0(tempdir(), "/grm.tif")
-#' grm = generic_region_merging(layers, ofile, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
+#' otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin"
+#' polygons = generic_region_merging(layers, ofile, otb_dir = otb_dir)
 #'
-#' color = grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = TRUE)]
-#' plot(grm, col= color)
-#'
-#' polygons = terra::as.polygons(grm)
-#'
-#' plotRGB(layers)
-#' plot(polygons, border = "red", add = TRUE)
+#' plotRGB(layers, r = 3, g = 1, b = 4)
+#' plot(polygons, add = TRUE)
 #' }
-generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thresh = 10, spec = 0.1, spat = 0.5,  method = "bs", otb_dir = "C:/OTB/bin")
+generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thresh = 25, spec = 0.1, spat = 0.5,  method = "bs", otb_dir = "C:/OTB/bin")
 {
   ifile = input@cpp$filenames()
   ifile = unique(ifile)
@@ -69,5 +72,40 @@ generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thr
 
   terra::writeRaster(grm, ofile, overwrite = TRUE)
   grm = terra::rast(ofile)
-  return(grm)
+
+  polygons = terra::as.polygons(grm)
+  polygons$grm = NULL
+
+  polygons = sf::st_as_sf(polygons)
+  polygons
+}
+
+#' @export
+#' @rdname segmentation
+kmeans_region_merging = function(input, polygons, k = 10)
+{
+  polygons = sf::st_as_sf(polygons)
+
+  data = lapply(1:terra::nlyr(input), function(i) { terra::extract(input[[i]], polygons, 'mean')[[2]] })
+  data = do.call(cbind, data)
+  data[is.nan(data)] = 0
+
+  group = stats::kmeans(data, k)
+
+  polygons$group = group$cluster
+  sf::st_agr(polygons) <- "constant"
+  grm_dissolved_poly = dplyr::group_by(polygons, group) |> dplyr::summarise()
+  sf::st_agr(grm_dissolved_poly) <- "constant"
+  grm_dissolved_poly = sf::st_cast(grm_dissolved_poly, "POLYGON")
+  grm_dissolved_poly$group = NULL
+  grm_dissolved_poly
+}
+
+#' @export
+#' @rdname segmentation
+kmeans_generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thresh = 10, spec = 0.1, spat = 0.5,  method = "bs", k = 10, otb_dir = "C:/OTB/bin")
+{
+  polygons = generic_region_merging(input, ofile, thresh, spec, spat, method, otb_dir)
+  if (k > 0) polygons = kmeans_region_merging(input, polygons, k)
+  return(polygons)
 }
