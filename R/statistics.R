@@ -45,7 +45,8 @@ polygon_statistics = function(polygons, on = NULL)
 morans_index = function(s, on, plot = FALSE)
 {
   nb <- spdep::poly2nb(s, queen=TRUE)
-  lw <- spdep::nb2listw(nb, style="W", zero.policy=TRUE)
+  lw = tryCatch({ spdep::nb2listw(nb, style="W", zero.policy=TRUE)}, error = function(e){ return(NULL) })
+  if (is.null(lw)) return(NA_real_)
   y <- s[[on]]
 
   if (plot)

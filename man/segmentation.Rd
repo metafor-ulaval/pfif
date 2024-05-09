@@ -45,7 +45,7 @@ Likely "C:/OTB/bin" on Windows}
 
 \item{polygons}{sf object. Vector of polygons}
 
-\item{k.}{Number of clusters}
+\item{k}{integer Number of clusters}
 }
 \value{
 the raster produced by OTB
