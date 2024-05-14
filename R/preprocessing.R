@@ -52,7 +52,7 @@ pre_processing = function(layers, smooth = 5, masks = NULL)
   }
 
   cat("Deal with missing data\n")
-  layers[is.na(layers)] <- NA
+  layers[anyNA(layers)] <- NA
 
   cat("Rescale in [0, 255]\n")
   layers = terra::stretch(layers, maxv = 255, minq = 0.01, maxq = 0.99)
