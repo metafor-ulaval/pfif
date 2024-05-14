@@ -76,6 +76,18 @@ generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thr
   polygons = terra::as.polygons(grm)
   polygons$grm = NULL
 
+  # Clean one pixel polygons
+  areas = terra::expanse(polygons)
+  small = areas < Reduce(`*`, terra::res(input))*1.5
+  if (any(small))
+  {
+    polygons = terra::combineGeoms(polygons[!small], polygons[small])
+    polygons$ID = 1:length(polygons)
+    polygons = terra::aggregate(polygons, by = "ID")
+    polygons$ID = NULL
+    polygons$agg_n = NULL
+  }
+
   polygons = sf::st_as_sf(polygons)
   polygons
 }
