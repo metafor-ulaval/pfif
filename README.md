@@ -13,6 +13,7 @@ remotes::install_github("metafor-ulaval/pfif")
 ``` r
 library(pfif)
 library(terra)
+library(sf)
 
 # load the data
 f = system.file("extdata", "metrics.tif", package="pfif")
@@ -34,10 +35,9 @@ layers = pre_processing(metrics, masks = masks)
 plot(layers)
 
 # Generic region merging
-ofile = paste0(tempdir(), "/grm.tif")
-polygons = generic_region_merging(layers, ofile, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
+polygons = generic_region_merging(layers, otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin")
 
-plotRGB(layers)
-plot(polygons, border = "red", add = T)
+plotRGB(layers, r = 1, g = 2, b = 4)
+plot(st_geometry(polygons), border = "red", add = T)
 ```
 

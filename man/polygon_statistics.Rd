@@ -23,6 +23,6 @@ library(sf)
 f = system.file("extdata", "inventory.gpkg", package="pfif")
 inventory = st_read(f)
 
-polygon_metrics(inventory)
-polygon_metrics(inventory, on = c("area"))
+polygon_statistics(inventory)
+polygon_statistics(inventory, on = c("area"))
 }

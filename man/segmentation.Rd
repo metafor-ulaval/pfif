@@ -2,30 +2,16 @@
 % Please edit documentation in R/region_merging.R
 \name{generic_region_merging}
 \alias{generic_region_merging}
-\alias{kmeans_region_merging}
-\alias{kmeans_generic_region_merging}
 \title{Segmentation of a raster into polygons}
 \usage{
 generic_region_merging(
   input,
   ofile = tempfile(fileext = ".tif"),
-  thresh = 25,
-  spec = 0.1,
+  thresh = 50,
+  spec = 0.5,
   spat = 0.5,
   method = "bs",
-  otb_dir = "C:/OTB/bin"
-)
-
-kmeans_region_merging(input, polygons, k = 10)
-
-kmeans_generic_region_merging(
-  input,
-  ofile = tempfile(fileext = ".tif"),
-  thresh = 10,
-  spec = 0.1,
-  spat = 0.5,
-  method = "bs",
-  k = 10,
+  simplify = TRUE,
   otb_dir = "C:/OTB/bin"
 )
 }
@@ -40,27 +26,23 @@ kmeans_generic_region_merging(
 \item{method}{string. refer to paper or OTB GRM webpage for description of parameters
 \url{https://www.orfeo-toolbox.org/CookBook-8.0/Applications/app_GenericRegionMerging.html}}
 
+\item{simplify}{boolean. Simplify the output of the GRM}
+
 \item{otb_dir}{string. Directory location of OTB (where you installed OTB earlier).
 Likely "C:/OTB/bin" on Windows}
-
-\item{polygons}{sf object. Vector of polygons}
-
-\item{k}{integer Number of clusters}
 }
 \value{
 the raster produced by OTB
 }
 \description{
-\code{generic_region_merging} is the original and the main function. It calls the OTB GenericRegionMerging software.
-OTB must be installed on your computer first. See  \url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}\cr\cr
-\code{kmeans_region_merging} takes the output of \code{generic_region_merging} and aggreates similar polygons into
-bigger polygons to generate of more realistic EFI with few and larger polygons using a K-Means Clustering
-approach.\cr\cr
-\code{kmean_generic_region_merging} is simply both algorithms in a single call.
+\code{generic_region_merging} calls the GenericRegionMerging software from Orfeo ToolBox (OTB).
+OTB must be installed on your computer first. See \url{https://www.orfeo-toolbox.org/CookBook-7.0/index.html}
 }
 \examples{
 \dontrun{
 library(terra)
+library(sf)
+
 f = system.file("extdata", "metrics.tif", package="pfif")
 g = system.file("extdata", "roads.gpkg", package="pfif")
 h = system.file("extdata", "stream.gpkg", package="pfif")
@@ -78,11 +60,10 @@ masks = list(roads, stream)
 layers = pre_processing(metrics, masks = masks)
 plot(layers)
 
-ofile = paste0(tempdir(), "/grm.tif")
 otb_dir = "/home/jr/Logiciels/OTB-8.1.2-Linux64/bin"
-polygons = generic_region_merging(layers, ofile, otb_dir = otb_dir)
+polygons = generic_region_merging(layers, otb_dir = otb_dir)
 
 plotRGB(layers, r = 3, g = 1, b = 4)
-plot(polygons, add = TRUE)
+plot(st_geometry(polygons), add = TRUE)
 }
 }

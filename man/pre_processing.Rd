@@ -11,12 +11,15 @@ pre_processing(layers, smooth = 5, masks = NULL)
 
 \item{smooth}{odd integer. 0 to skip the smoothing stage}
 
-\item{masks}{List of SpatVector object that will be used to mask the raster}
+\item{masks}{List of SpatVector objects that will be used to mask the raster}
+}
+\value{
+A SpatRaster
 }
 \description{
-Using a multiband raster that will later be used as a basis for polygon segmentation, the function masks
-the unwanted pixel (rivers, lakes, roads, ...), smooth the layers, and normalize the value to range
-in \verb{[0,100]}
+Using a multiband raster that will later be used for polygon segmentation in \link{generic_region_merging},
+the function masks the unwanted pixel (rivers, lakes, roads, ...), smooth the layers, and normalizes the values to range
+in \verb{[0,255]}
 }
 \examples{
 library(terra)

@@ -14,8 +14,8 @@
 #' f = system.file("extdata", "inventory.gpkg", package="pfif")
 #' inventory = st_read(f)
 #'
-#' polygon_metrics(inventory)
-#' polygon_metrics(inventory, on = c("area"))
+#' polygon_statistics(inventory)
+#' polygon_statistics(inventory, on = c("area"))
 polygon_statistics = function(polygons, on = NULL)
 {
   holes = get_holes(polygons)
@@ -32,7 +32,7 @@ polygon_statistics = function(polygons, on = NULL)
   {
     I_attr = morans_index(polygons, attr)
     mean_attr = mean(polygons[[attr]], na.rm = T)
-    std_attr = sd(polygons[[attr]], na.rm = T)
+    std_attr = stats::sd(polygons[[attr]], na.rm = T)
 
     res[[paste0(attr, "_I")]] = I_attr
     res[[paste0(attr, "_mean")]] = mean_attr
@@ -53,7 +53,7 @@ morans_index = function(s, on, plot = FALSE)
   {
     y.lag <- spdep::lag.listw(lw, y)
     plot(y.lag ~ y, pch=16, asp=1, xlab = on, ylab = paste0("Lag ", on))
-    graphics::abline(lm(y.lag ~ y), col="blue")
+    graphics::abline(stats::lm(y.lag ~ y), col="blue")
   }
 
   I <- spdep::moran(y, lw, length(nb), spdep::Szero(lw))[1]
@@ -64,7 +64,7 @@ get_holes <- function(x)
 {
   sf::st_agr(x) = "constant"
   x <- sf::st_cast(x, "POLYGON")
-  l <- as.data.frame(sf:::st_coordinates(x))
+  l <- as.data.frame(sf::st_coordinates(x))
   l <- l[l$L1 > 1,]
   l <- split(l,list(l$L1, l$L2))
   l <- Filter(function(x) { nrow(x) > 0 }, l)

@@ -1,13 +1,14 @@
 #' Pre-processing stage
 #'
-#' Using a multiband raster that will later be used as a basis for polygon segmentation, the function masks
-#' the unwanted pixel (rivers, lakes, roads, ...), smooth the layers, and normalize the value to range
-#' in `[0,100]`
-#'
+#' Using a multiband raster that will later be used for polygon segmentation in \link{generic_region_merging},
+#' the function masks the unwanted pixel (rivers, lakes, roads, ...), smooth the layers, and normalizes the values to range
+#' in `[0,255]`
 #'
 #' @param layers SpatRaster. Multiband raster to segment with \link{generic_region_merging}
 #' @param smooth odd integer. 0 to skip the smoothing stage
-#' @param masks List of SpatVector object that will be used to mask the raster
+#' @param masks List of SpatVector objects that will be used to mask the raster
+#'
+#' @return A SpatRaster
 #' @export
 #' @md
 #' @examples
