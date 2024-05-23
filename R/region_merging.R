@@ -46,7 +46,7 @@
 #' }
 generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thresh = 50, spec = 0.5, spat = 0.5,  method = "bs", simplify = TRUE, otb_dir = "C:/OTB/bin")
 {
-  ifile = input@cpp$filenames()
+  ifile = input@ptr$filenames()
   ifile = unique(ifile)
   if (length(ifile) != 1 || !file.exists(ifile))
   {
