@@ -56,9 +56,9 @@ generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thr
     terra::writeRaster(input, ifile)
   }
 
-  ifile = normalizePath(ifile, mustWork = FALSE)
-  ofile = normalizePath(ofile, mustWork = FALSE)
-  otb_dir = normalizePath(otb_dir, mustWork = FALSE)
+  ifile = normalizePath(ifile, mustWork = FALSE, winslash = "/")
+  ofile = normalizePath(ofile, mustWork = FALSE, winslash = "/")
+  otb_dir = normalizePath(otb_dir, mustWork = FALSE, winslash = "/")
 
   cmd <- paste0(otb_dir, "/otbcli_GenericRegionMerging -in ", ifile, " -out ", ofile, " -criterion ", method, " -threshold ", thresh, " -cw ", spec, " -sw ", spat)
   cat(cmd, "\n")
