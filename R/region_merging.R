@@ -89,7 +89,11 @@ generic_region_merging = function(input, ofile = tempfile(fileext = ".tif"), thr
   polygons = sf::st_as_sf(polygons)
 
   if (simplify)
+  {
     polygons <- rmapshaper::ms_simplify(polygons, keep = 0.25,  keep_shapes = TRUE, weighting = 1)
+    dim = st_dimension(polygons)
+    polygons = polygons[!is.na(dim), ]
+  }
 
   return(polygons)
 }
