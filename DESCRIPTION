@@ -6,7 +6,7 @@ Authors@R: c(
     person("Ethan", "Berman", email = "", role = c("aut","cph")),
     person("Jean-Romain", "Roussel", email = "jean-romain.roussel.1@ulaval.ca", role = c("aut", "cre")))
 Description: Integration of Photo Interpreted and LiDAR Attributes into a Polygonal Forest Inventory Framework.
-Imports: terra,rmapshaper,sf,stats,spdep
+Imports: terra (>= 1.8-29),rmapshaper,sf,stats,spdep
 Suggests: dplyr
 License: MIT + file LICENSE
 Encoding: UTF-8
